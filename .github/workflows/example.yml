@@ -60,3 +60,27 @@ jobs:
         with:
           name: rspec result screenshots
           path: tmp/screenshots/
+
+  success_notify:
+      needs: [build]
+      runs-on: ubuntu-latest
+      steps:
+      - name: slack notify
+        uses: rtCamp/action-slack-notify@master
+        env:
+          SLACK_WEBHOOK: ${{ secrets.SLACK_CI_WEBHOOK }}
+          SLACK_MESSAGE: 'Post Content :rocket:'
+          SLACK_CHANNEL: rails-ci
+
+    failure_notify:
+      if: failure()
+      needs: [build]
+      runs-on: ubuntu-latest
+      steps:
+      - name: slack notify
+        uses: rtCamp/action-slack-notify@master
+        env:
+          SLACK_WEBHOOK: ${{ secrets.SLACK_CI_WEBHOOK }}
+          SLACK_MESSAGE: 'Post Content :rocket:'
+          SLACK_CHANNEL: rails-ci
+          SLACK_COLOR: '#FF0000'
